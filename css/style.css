@@ -1,0 +1,151 @@
+html {
+  font-family: sans-serif;
+  margin-bottom: 0px;
+}
+h4 {
+	text-align: center;
+	font-size: 150%;
+}
+/**************************
+// HEADER
+/*************************/
+header 
+{
+	width: 100%;
+	height: 150px;
+	overflow: hidden;
+	background-color:darkslategray;
+	/*background-image: url(https://goo.gl/7Po41r);*/
+	margin: 0px;
+	padding: 0px;
+	font-family: 'Open Sans', sans-serif;
+	text-align: center;
+}
+
+header h1
+{
+	text-align: center;
+	width:350px;
+	margin-left:auto;
+	margin-right:auto;
+}
+ol {
+	text-align: auto;
+}
+
+header nav
+{
+	text-align: center;
+	margin-left:auto;
+	margin-right:auto;
+	display: relative;
+	width:700px;
+}
+
+header nav ol
+{
+  	width: 700px;
+}
+
+header nav ol li
+{
+	position: relative;
+	text-align: center;
+	display: inline;
+	margin-right:100px;
+}
+
+/**************************
+// BODY
+/*************************/
+body {
+	margin: 0;
+}
+#body-wrapper
+{
+	width: 100%;
+	height: 100%;
+	margin-top: 10px;
+	margin-right: 80px;
+	margin-left: 9%;
+}
+
+#col1
+{
+	width: 18%;
+	height: 100%;
+	float:left;
+	margin-right: 20px;
+	margin-bottom: 10px;
+	background-color:saddlebrown;
+}
+
+#subform
+{
+	margin: auto;
+	width: 150px;
+	display: block;
+	position: relative;
+}
+
+#col2
+{
+	width: 59%;
+	height: 100%;
+	float:left;
+	/*margin-right: 10px;*/
+	padding: 20px;
+	background-color: gray;
+}
+
+h2 {
+	text-align: center;
+	font-size: 150%;
+}
+#col3
+{
+	width: 18%;
+	height: 100%;
+	margin-top: 10px;
+	margin-right: 10px;
+	margin-left: 20px;
+	background-color:lightslategrey;
+}
+
+div.clear {
+	clear:both;
+}
+
+/**************************
+// FOOTER
+/*************************/
+footer
+{
+	width: 100%;
+	height: 30px;
+	margin-top: 10px;
+	margin-bottom: 0px;
+	background-color: darkslategray;
+}
+
+#footer-wrapper
+{
+	width: 650px;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+footer section
+{
+	margin-left:auto;
+	margin-right:auto;
+}
+
+footer section nav
+{
+	text-align: center;
+	margin-left:auto;
+	margin-right:auto;
+	margin-bottom: 0px;
+	width: auto;
+}
