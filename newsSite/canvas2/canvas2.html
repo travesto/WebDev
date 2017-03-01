@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Lines</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript" src="dist/paper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        // Create a rectangle shaped path with its top left point at
+        // {x: 75, y: 75} and a size of {width: 75, height: 75}
+        var left1 = new Path.Rectangle({
+          point: [75, 75],
+          size: [75, 75],
+          fillColor: 'purple'
+        });
+        
+        // {x: 95, y: 75} and a size of {width: 75, height: 75}
+        var mid1 = new Path.Rectangle({
+          point: [175, 75],
+          size: [75, 75],
+          fillColor: 'grey'
+        });
+
+        // {x: 225, y: 75} and a size of {width: 75, height: 75}
+        var right1 = new Path.Rectangle({
+          point: [275, 75],
+          size: [75, 75],
+          fillColor: 'purple'
+        });
+
+        // {x: 225, y: 75} and a size of {width: 75, height: 75}
+        var right2 = new Path.Rectangle({
+          point: [375, 75],
+          size: [75, 75],
+          fillColor: 'grey'
+        });
+        
+        var destination = Point.random() * view.size;
+        var destination1 = Point.random() * view.size;
+        var destination2 = Point.random() * view.size;
+        var destination3 = Point.random() * view.size;
+
+        
+        function onFrame(event) {
+          // Each frame, rotate the path by 3 degrees:
+            left1.rotate(3);
+            mid1.rotate(3);
+            right1.rotate(3);
+            right2.rotate(3);
+            
+            var vector = destination - mid1.position;
+            mid1.position += vector / 30;
+            mid1.content = Math.round(vector.length);
+            if (vector.length < 5) {
+              destination = Point.random() * view.size;
+            }
+            var vector1 = destination1 - left1.position;
+            left1.position += vector1 / 30;
+            left1.content = Math.round(vector1.length);
+            if (vector.length < 5) {
+              destination1 = Point.random() * view.size;
+            }
+            var vector2 = destination2 - right1.position;
+            right1.position += vector2 / 30;
+            right1.content = Math.round(vector2.length);
+            if (vector2.length < 5) {
+              destination2 = Point.random() * view.size;
+            }
+            var vector3 = destination3 - right2.position;
+            right2.position += vector3 / 30;
+            right2.content = Math.round(vector3.length);
+            if (vector3.length < 5) {
+              destination3 = Point.random() * view.size;
+            }
+        }
+
+        
+    </script>
+</head>
+<body style="background:black">
+    <canvas id="canvas" resize></canvas>
+</body>
+</html>
