@@ -1,0 +1,292 @@
+<!-- With help from developers.google.com and w3schools.com -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>ACU Map</title>
+    <style>
+        #map {
+            height: 100%;
+        }
+        
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 17,
+                center: {
+                    lat: 32.471081,
+                    lng: -99.707941
+                }
+            });
+
+            setMarkers(map);
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    var userLoc = new google.maps.Marker({
+                        position: pos,
+                        map: map,
+                        title: 'Your Location'
+                    });
+                    map.setCenter(pos);
+
+                });
+            }
+
+            //======================
+            // Code for the Polygon
+            //======================
+
+            // Define the LatLng coordinates for the polygon's path.
+            var cobaCoords = [
+                new google.maps.LatLng(32.468018, -99.707196),
+                new google.maps.LatLng(32.467835, -99.706653),
+                new google.maps.LatLng(32.467240, -99.706644),
+                new google.maps.LatLng(32.467346, -99.707197),
+                new google.maps.LatLng(32.468018, -99.707196) //notice the final point is the first point to close off our shape
+            ];
+            // Define the LatLng coordinates for the polygon's path.
+            var hwcCoords = [
+                new google.maps.LatLng(32.470853, -99.705813),
+                new google.maps.LatLng(32.470864, -99.705050),
+                new google.maps.LatLng(32.470255, -99.705028),
+                new google.maps.LatLng(32.470244, -99.705804),
+                new google.maps.LatLng(32.470853, -99.705813) //notice the final point is the first point to close off our shape
+            ];
+            // Define the LatLng coordinates for the polygon's path.
+            var bibleCoords = [
+                new google.maps.LatLng(32.469113, -99.707897),
+                new google.maps.LatLng(32.469113, -99.707549),
+                new google.maps.LatLng(32.469582, -99.707549),
+                new google.maps.LatLng(32.469597, -99.707049),
+                new google.maps.LatLng(32.468668, -99.707062),
+                new google.maps.LatLng(32.468642, -99.707901),
+                new google.maps.LatLng(32.469113, -99.707897) //notice the final point is the first point to close off our shape
+            ];
+            // Construct the polygon.
+            coba = new google.maps.Polygon({
+                paths: cobaCoords,
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35
+            });
+            hwc = new google.maps.Polygon({
+                paths: hwcCoords,
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35
+            });
+            bible = new google.maps.Polygon({
+                paths: bibleCoords,
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35
+            });
+            //Place the polygon
+            coba.setMap(map);
+            hwc.setMap(map);
+            bible.setMap(map);
+
+            //======================
+
+            //======================
+            // Code for the Info Window
+            //======================
+
+            //Define the text for the window
+            var cobaWords = '<div id="content">' +
+                '<div id="siteNotice">' +
+                '</div>' +
+                '<h1 id="firstHeading" class="firstHeading">COBA</h1>' +
+                '<div id="bodyContent">' +
+                '<p><b>COBA</b>, also referred to as <b>that one building with the doors and windows</b>, is a large ' +
+                'walled-off place where they heat your water, cool your air, and euthanize cats.</p>' +
+                '</div>' +
+                '</div>';
+
+            //Define where the point of the bubble is placed (in this case, the top-left of the square defined above)
+            var info1 = new google.maps.LatLng(32.468018, -99.707196);
+
+            //Create the info window using gmaps API
+            var infowindow1 = new google.maps.InfoWindow({
+                content: cobaWords,
+                position: new google.maps.LatLng(32.468018, -99.707196)
+            });
+            //hwc
+            var hwcWords = '<div id="content">' +
+                '<div id="siteNotice">' +
+                '</div>' +
+                '<h1 id="firstHeading" class="firstHeading">Hunter Welcome Center</h1>' +
+                '<div id="bodyContent">' +
+                '<p><b>COBA</b>, also referred to as <b>that one building with the doors and windows</b>, is a large ' +
+                'walled-off place where they heat your water, cool your air, and euthanize cats.</p>' +
+                '</div>' +
+                '</div>';
+
+            //Define where the point of the bubble is placed (in this case, the top-left of the square defined above)
+            var info2 = new google.maps.LatLng(32.470853, -99.705813);
+
+            //Create the info window using gmaps API
+            var infowindow2 = new google.maps.InfoWindow({
+                content: hwcWords,
+                position: new google.maps.LatLng(32.470853, -99.705813)
+            });
+            //bible
+            var bibleWords = '<div id="content">' +
+                '<div id="siteNotice">' +
+                '</div>' +
+                '<h1 id="firstHeading" class="firstHeading">Blerg</h1>' +
+                '<div id="bodyContent">' +
+                '<p><b>COBA</b>, also referred to as <b>that one building with the doors and windows</b>, is a large ' +
+                'walled-off place where they heat your water, cool your air, and euthanize cats.</p>' +
+                '</div>' +
+                '</div>';
+
+            //Define where the point of the bubble is placed (in this case, the top-left of the square defined above)
+            var info3 = new google.maps.LatLng(32.469113, -99.707897);
+
+            //Create the info window using gmaps API
+            var infowindow3 = new google.maps.InfoWindow({
+                content: bibleWords,
+                position: new google.maps.LatLng(32.469113, -99.707897)
+            });
+
+            //Set the event listener so that when we click our polygon, it opens the info window
+            google.maps.event.addListener(coba, 'click', function() {
+                infowindow1.open(map);
+            });
+            google.maps.event.addListener(hwc, 'click', function() {
+                infowindow2.open(map);
+            });
+            google.maps.event.addListener(bible, 'click', function() {
+                infowindow3.open(map);
+            });
+            //======================
+        }
+
+        function setMarkers(map) {
+            var image = {
+                url: 'http://my.acu.edu/responsive-bootstrap-theme/images/diff/logo-foot.png',
+                // This marker is 20 pixels wide by 32 pixels high.
+                size: new google.maps.Size(59, 41),
+                // The origin for this image is (0, 0).
+                origin: new google.maps.Point(0, 0),
+                // The anchor for this image is the base of the flagpole at (0, 32).
+                anchor: new google.maps.Point(0, 41)
+            };
+            // Shapes define the clickable region of the icon. The type defines an HTML
+            // <area> element 'poly' which traces out a polygon as a series of X,Y points.
+            // The final coordinate closes the poly by connecting to the first coordinate.
+            var shape = {
+                coords: [1, 1, 1, 20, 18, 20, 18, 1],
+                type: 'poly'
+            };
+            //lib
+            var lib = {
+                lat: 32.468834,
+                lng: -99.709859
+            };
+            var libWords = '<div id="content">' +
+                '<div id="siteNotice">' +
+                '</div>' +
+                '<h1 id="firstHeading" class="firstHeading">Library</h1>' +
+                '<div id="bodyContent">' +
+                '<p><b>COBA</b>, also referred to as <b>that one building with the doors and windows</b>, is a large ' +
+                'walled-off place where they heat your water, cool your air, and euthanize cats.</p>' +
+                '</div>' +
+                '</div>';
+            var InfoWindow4 = new google.maps.InfoWindow({
+                content: libWords
+            });
+            var libMarker = new google.maps.Marker({
+                position: lib,
+                map: map,
+                title: 'Library',
+                icon: image
+            });
+            libMarker.addListener('click', function() {
+                InfoWindow4.open(map, libMarker);
+            });
+
+            //osc
+            var osc = {
+                lat: 32.466997,
+                lng: -99.709808
+            };
+            var oscWords = '<div id="content">' +
+                '<div id="siteNotice">' +
+                '</div>' +
+                '<h1 id="firstHeading" class="firstHeading">Onstead</h1>' +
+                '<div id="bodyContent">' +
+                '<p><b>COBA</b>, also referred to as <b>that one building with the doors and windows</b>, is a large ' +
+                'walled-off place where they heat your water, cool your air, and euthanize cats.</p>' +
+                '</div>' +
+                '</div>';
+            var InfoWindow5 = new google.maps.InfoWindow({
+                content: oscWords
+            });
+            var oscMarker = new google.maps.Marker({
+                position: osc,
+                map: map,
+                title: 'Onstead',
+                icon: image
+            });
+            oscMarker.addListener('click', function() {
+                InfoWindow5.open(map, oscMarker);
+            });
+            //rec
+            var rec = {
+                lat: 32.470142,
+                lng: -99.708211
+            };
+            var recWords = '<div id="content">' +
+                '<div id="siteNotice">' +
+                '</div>' +
+                '<h1 id="firstHeading" class="firstHeading">Rec</h1>' +
+                '<div id="bodyContent">' +
+                '<p><b>COBA</b>, also referred to as <b>that one building with the doors and windows</b>, is a large ' +
+                'walled-off place where they heat your water, cool your air, and euthanize cats.</p>' +
+                '</div>' +
+                '</div>';
+            var InfoWindow6 = new google.maps.InfoWindow({
+                content: recWords
+            });
+            var recMarker = new google.maps.Marker({
+                position: rec,
+                map: map,
+                title: 'Rec',
+                icon: image
+            });
+            recMarker.addListener('click', function() {
+                InfoWindow6.open(map, recMarker);
+            });
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDYxTg__ZW60dsCFRvkpd6dFUogDskIH4Q &callback=initMap">
+    </script>
+</body>
+
+</html>
