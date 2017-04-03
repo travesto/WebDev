@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>FB Stats</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans+Condensed" rel="stylesheet"> 
+    <meta charset="UTF-8">
+  </head>
+<body>
+<script>
+  // This is called with the results from from FB.getLoginStatus().
+  function statusChangeCallback(response) {
+    console.log('statusChangeCallback');
+    console.log(response);
+    // The response object is returned with a status field that lets the
+    // app know the current login status of the person.
+    // Full docs on the response object can be found in the documentation
+    // for FB.getLoginStatus().
+    if (response.status === 'connected') {
+      // Logged into your app and Facebook.
+      testAPI();
+    } else {
+      // The person is not logged into your app or we are unable to tell.
+      window.location.replace("fb.html");
+    }
+  }
+
+  // This function is called when someone finishes with the Login
+  // Button.  See the onlogin handler attached to it in the sample
+  // code below.
+  function checkLoginState() {
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+  }
+
+  window.fbAsyncInit = function() {
+  FB.init({
+    appId      : '400840683606141',
+    cookie     : true,  // enable cookies to allow the server to access 
+                        // the session
+    xfbml      : true,  // parse social plugins on this page
+    version    : 'v2.8' // use graph api version 2.8
+  });
+
+  FB.getLoginStatus(function(response) {
+    statusChangeCallback(response);
+  });
+
+  };
+  
+
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+  // Here we run a very simple test of the Graph API after login is
+  // successful.  See statusChangeCallback() for when this call is made.
+  function testAPI() {
+    // document.open();
+    console.log('Welcome!  Fetching your information.... ');
+    FB.api('/me', function(response) {
+        console.log('Howdy, ' + response.name + '.');
+        document.open();
+        response.onload = function() { console.log('Running');}
+        document.write("<html><head><title>FB Stats</title><link rel='stylesheet' href='style.css'>" + 
+        "<script>"+"function fbLogout() {" + "FB.logout(function(response) {" + "window.location.reload();" + "});}" + "</scr"+"ipt>" + 
+        "</head><body>");
+    });
+    FB.api('/me?fields=picture{url}', function(response) {
+      // document.open();
+      //console.log(response.picture.data.url);
+      document.write("<br>");
+      document.write("<img class='centered' src='" + response.picture.data.url + "'>");
+      document.write("<br><br>");
+    });
+    FB.api('/me?fields=birthday,first_name', function(response) {
+      document.write("<h1><br>Guten Tag, <strong>" + response.first_name + "</strong></h1>");
+      document.write("<h2><em>" + response.birthday + "</em></h2><br>");
+    });
+    FB.api('/me/feed?fields=from,message,story,created_time,full_picture&limit=5', function(response) 
+    {
+        // document.open();
+        for (var i=0; i<response.data.length; i++)
+        { 
+          if (typeof response.data[i].message == 'undefined') {
+              document.write("<em>Update:</em> " + response.data[i].story + "<br>" + "<img class='centered' src='" + response.data[i].full_picture + "''>" + "<br>" +  response.data[i].created_time + "<br><br>");
+          } else {
+              document.write(response.data[i].from.name + " writes: " + response.data[i].message + "<br>" + response.data[i].created_time + "<br><br>");
+          }
+          document.write("<hr class='post'>");
+        }
+        document.write(
+          "<button id='fbLogout' onclick='fbLogout()'>" + "Logout" + "</button>"
+        );
+        document.write("</body></html>");
+        document.close();
+    });
+  // document.close();
+  }
+</script>
+<!--function fbLogout() {
+    FB.logout(function(response) {
+        window.location.reload();
+    });
+}-->
+
+</body>
+</html>
