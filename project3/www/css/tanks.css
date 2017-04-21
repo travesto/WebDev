@@ -3,7 +3,25 @@ body{
 	font-family: Helvetica Neue, Arial;
 	overflow: hidden;
 }
-
+h1 {
+    font-size: 36pt;
+    font-family: 'Permanent Marker', cursive;
+    color: #962D3E;
+	text-align: center;	
+}
+h2 {
+	text-align: center;
+}
+.nice {
+	position: absolute;
+	top: 100px;
+	left: 50%;
+	margin-left: -200px;
+	width: 400px;
+	background-color: #eee;
+	z-index: 2;
+	padding: 10px;
+}
 .name-prompt{
 	position: absolute;
 	top: 100px;

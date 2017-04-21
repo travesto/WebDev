@@ -5,6 +5,7 @@ var socket = io.connect('http://ec2-54-203-21-228.us-west-2.compute.amazonaws.co
 var game = new Game('#arena', WIDTH, HEIGHT, socket);
 var selectedTank = 1;
 var tankName = '';
+var audio = new Audio('/stayinalive.mp3');
 
 socket.on('addTank', function(tank) {
     game.addTank(tank.id, tank.type, tank.isLocal, tank.x, tank.y);
@@ -53,5 +54,8 @@ function joinGame(tankName, tankType, socket) {
     if (tankName != '') {
         $('#prompt').hide();
         socket.emit('joinGame', { id: tankName, type: tankType });
+        audio.play();
+        audio.volume = 0.5;
+        audio.loop = true;
     }
 }
