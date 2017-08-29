@@ -1,15 +1,26 @@
-/*color theme https://color.adobe.com/Gettysburg-color-theme-209416/ */
+/*color theme https://color.adobe.com/Gettysburg-color-theme-209416/edit/?copy=true */
 /*********font***************/
+iframe {
+    height: 1080px;
+    width: 1024px;
+    margin: 0 auto;
+    display: block;
+}
 h1 {
     font-size: 36pt;
     font-family: 'Permanent Marker', cursive;
     color: #962D3E;
+    line-height: .25em;
 }
 h2 {
   text-align: center;
 }
 body {
     font-family: 'Coming Soon', cursive;
+    overflow-x: hidden;
+}
+h4{
+  color: #343642;
 }
 /*********NavBar**************/
 ul {
@@ -23,8 +34,11 @@ ul {
 
 li {
     float: left;
+    /*color: white;*/
 }
-
+li.hello a:hover:not(.active) {
+    background-color: #343642;
+}
 li a {
     display: block;
     color: white;
@@ -40,10 +54,6 @@ li a:hover:not(.active) {
 .active {
     background-color: #348899;
 }
-.tpic {
-    width: 300px;
-    height: 300px;
-}
 table, th, td {
   border: 1px solid black;
   margin: auto;
@@ -51,6 +61,35 @@ table, th, td {
 .login {
   border: none;
 }
+.nice {
+  background-color: #979C9C;
+  max-width: 480px;
+  margin: 20px auto 20px auto;
+}
+input[type='text'], input[type='password'], textarea {
+  font: 'Coming Soon', cursive;
+  font-size: 24px;
+  width: 96%;
+  padding: 4px 6px;
+  border: 1px solid #fff;
+  border-radius: 8px;
+}
+input[type='submit'], textarea {
+    font: 'Coming Soon', cursive;
+    background-color: #348899;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 10px;
+    margin-top:10px;
+    float: left;
+    text-transform: uppercase;
+  }
+.textcenter {
+  text-align: center;
+}
+
+
 /********** TABS **********
 .tab-list {
   margin: 0;

@@ -1,11 +1,12 @@
 var DEBUG = true;
-var INTERVAL = 50;
+var INTERVAL = 70;
 var ROTATION_SPEED = 5;
 var ARENA_MARGIN = 30;
 
 function Game(arenaId, w, h, socket){
 	this.tanks = []; //Tanks (other than the local tank)
 	this.balls = [];
+	this.powerup = [];
 	this.width = w;
 	this.height = h;
 	this.$arena = $(arenaId);
@@ -21,6 +22,18 @@ function Game(arenaId, w, h, socket){
 
 Game.prototype = {
 
+	addPowerup: function(type, x, y, id) {
+		var t = new Powerup(type, this.$arena, x,y, id);
+		this.powerup.push(t);
+		console.log("GREG");
+	},
+	removePowerup: function(id){
+		this.powerup = this.powerup.filter(function(t){return t.id != id});
+		$('#' + id).remove();
+		$('#info-' + id).remove();
+		this.powerup.dead = true;
+	},
+
 	addTank: function(id, type, isLocal, x, y, hp){
 		var t = new Tank(id, type, this.$arena, this, isLocal, x, y, hp);
 		if(isLocal){
@@ -33,6 +46,7 @@ Game.prototype = {
 	removeTank: function(tankId){
 		//Remove tank object
 		this.tanks = this.tanks.filter( function(t){return t.id != tankId} );
+		// this.$arean.append('<img id="lose')
 		//remove tank from dom
 		$('#' + tankId).remove();
 		$('#info-' + tankId).remove();
@@ -57,14 +71,62 @@ Game.prototype = {
 	},
 
 	mainLoop: function(){
+		var localgame = this;
 		if(this.localTank != undefined){
-			this.sendData(); //send data to server about local tank
-		}
+			var tempTank = this.localTank;
+			var tempTankX = this.localTank.x;
+			var tempTankY = this.localTank.y;
+			var yolo = 0;
+			this.powerup.forEach(function(powerup) {
+				
+			if (Math.abs(tempTankX - powerup.x) < 30 && Math.abs(tempTankY - powerup.y) < 30) {
+				switch (powerup.type) {
+					case "heart":
+						localgame.localTank.hp += 100;
+						yolo = 1;
+						console.log("HP");
+						break;
+					case "speed":
+						tempTank.speed = 15;
+						yolo = 2;
+						console.log("speed");
+						break;
+					case "bullet":
+						localgame.localTank.hp -= 25;
+						yolo = 3;
+						console.log("die");
+						break;
+				}
+				localgame.removePowerup(powerup.id);
+				}
+			});	
 
+			switch (yolo) {
+				case 1:
+					this.localTank.hp = 100;
+					break;
+				case 2:
+					this.localTank.speed = 15;
+					break;
+				case 3:
+					this.localTank.hp = 25;
+			}
+			this.sendData(); //send data to server about 
+		}
 		if(this.localTank != undefined){
 			//move local tank
 			this.localTank.move();
 		}
+		var game = this;
+		var n = getRandomInt(1,4);
+		// console.log(n);
+		var x = getRandomInt(1,100);
+		if (x == 1) {
+			var lat = getRandomInt(40, 900);
+			var lon = getRandomInt(40, 500);
+			this.addPowerup(n,lat, lon, false);
+		}
+		
 
 	},
 
@@ -78,22 +140,41 @@ Game.prototype = {
 			x: this.localTank.x,
 			y: this.localTank.y,
 			baseAngle: this.localTank.baseAngle,
-			cannonAngle: this.localTank.cannonAngle
+			cannonAngle: this.localTank.cannonAngle,
+			hp: this.localTank.hp
 		};
+		// console.log("T = " + Object.values(t));
 		gameData.tank = t;
+		// console.log("Local HP: " + this.localTank.hp);
 		//Client game does not send any info about balls,
 		//the server controls that part
 		this.socket.emit('sync', gameData);
+	},
+
+	amazingData: function(t) {
+		var gameData = {};
+
+		var p = {
+			id: t.id,
+			x: t.x,
+			y: t.y,
+			dead: t.dead,
+			superid: t.superid
+		}
+		console.log(p);
+		gameData.powerup = p;
+		this.socket.emit('createPowerup', gameData);
 	},
 
 	receiveData: function(serverData){
 		var game = this;
 
 		serverData.tanks.forEach( function(serverTank){
-
+			
 			//Update local tank stats
 			if(game.localTank !== undefined && serverTank.id == game.localTank.id){
 				game.localTank.hp = serverTank.hp;
+				// console.log(game.localTank.hp + " AND " + serverTank.hp);
 				if(game.localTank.hp <= 0){
 					game.killTank(game.localTank);
 				}
@@ -169,7 +250,27 @@ Ball.prototype = {
 	}
 
 }
+function Powerup (type, $arena, x, y, id) {
+	switch (type) {
+		case 1:
+			this.type = "heart";
+			break;
+		case 2:
+			this.type = "speed";
+			break;
+		case 3:
+			this.type = "bullet";
+			break;
+	}
+	this.dead = false;
 
+	this.$arena = $arena;
+	this.x = getRandomInt(40,900);
+	this.y = getRandomInt(40,500);
+	this.id = getRandomInt(1,1000);
+	this.materialize();
+
+}
 function Tank(id, type, $arena, game, isLocal, x, y, hp){
 	this.id = id;
 	this.type = type;
@@ -190,6 +291,18 @@ function Tank(id, type, $arena, game, isLocal, x, y, hp){
 	this.dead = false;
 
 	this.materialize();
+}
+
+Powerup.prototype = {
+	materialize: function(){
+		this.$arena.append('<div id="' + this.id + '" class="' + this.type + '"></div>');
+		this.$body = $('#' + this.id);
+		this.$body.css('width', 32);
+		this.$body.css('height', 32);
+		this.$body.css('left', this.x - 30 + 'px');
+		this.$body.css('top', this.y - 40 + 'px');		
+	}
+	
 }
 
 Tank.prototype = {

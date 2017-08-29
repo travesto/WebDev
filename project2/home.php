@@ -89,7 +89,6 @@ else
             <li><a href="fpv.php">FPV Copters</a></li>
             <li><a href="uav.php">UAV Drones</a></li>
             <li><a href="mil.php">Military Drones</a></li>
-            <li style="float:right"><a href="cart.php">Shopping Cart</a></li>
             <li style="float:right"><a href="logout.php">Log Out</a></li>
             <li class="hello" style="float:right"><a><?php echo("Hello, ".$name)?></a></li>
         </ul>

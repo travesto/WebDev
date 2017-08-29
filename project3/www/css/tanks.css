@@ -185,3 +185,19 @@ h2 {
 .tank3{
 	background-image: url(../img/tank-3-base.png);
 }
+
+.heart{
+	position: absolute;
+	background-image: url(../img/heart.png);
+	background-repeat: no-repeat;
+}
+.speed {
+	position: absolute;
+	background-image: url(../img/fast.png);
+	background-repeat: no-repeat;
+}
+.bullet {
+	position: absolute;
+	background-image: url(../img/lightning.png);
+	background-repeat: no-repeat;
+}

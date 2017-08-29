@@ -1,0 +1,8 @@
+Tank Battle by Cole Spears, Preston Werner and Travis Cook
+with help from rubentd-tanks.herokuapp.com
+
+Cole did most of the game mechanics and game graphics.
+Travis did login mechanism, CSS, and backend PHP.
+
+Preston did some Node stuff. Cole broke some node stuff.
+We did power up and what not. Yay

@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var counter = 0;
-var BALL_SPEED = 10;
+var BALL_SPEED = 15;
 var WIDTH = 1100;
 var HEIGHT = 580;
 var TANK_INIT_HP = 100;
@@ -19,11 +19,15 @@ var io = require('socket.io')(server);
 function GameServer(){
 	this.tanks = [];
 	this.balls = [];
+	this.powerup = [];
 	this.lastBallId = 0;
 }
 
 GameServer.prototype = {
 
+	addPowerup: function(coolPowerup) {
+		this.powerup.push(coolPowerup);
+	},
 	addTank: function(tank){
 		this.tanks.push(tank);
 	},
@@ -36,15 +40,18 @@ GameServer.prototype = {
 		//Remove tank object
 		this.tanks = this.tanks.filter( function(t){return t.id != tankId} );
 	},
-
+	
 	//Sync tank with new data received from a client
 	syncTank: function(newTankData){
+		var self = this;
 		this.tanks.forEach( function(tank){
 			if(tank.id == newTankData.id){
 				tank.x = newTankData.x;
 				tank.y = newTankData.y;
 				tank.baseAngle = newTankData.baseAngle;
 				tank.cannonAngle = newTankData.cannonAngle;
+				// tank.hp = newTankData.hp;
+				self.setHealth(tank, newTankData.hp);
 			}
 		});
 	},
@@ -64,7 +71,41 @@ GameServer.prototype = {
 			}
 		});
 	},
+	syncPowerup: function(){
+		var self = this;
+		//Detect when ball is out of bounds
+		this.powerup.forEach( function(coolPowerup){
+			self.detectCollision2(coolPowerup);
 
+		});
+	},
+	
+	detectCollision2: function(coolPowerup){
+		var self = this;
+
+		this.tanks.forEach( function(tank){
+			if(
+				Math.abs(tank.x - coolPowerup.x) < 30
+				&& Math.abs(tank.y - coolPowerup.y) < 30){
+				//Hit tank
+				switch (coolPowerup.type) {
+					case 1:
+						tank.hp = TANK_INIT_HP;
+						console.log("HP");
+						break;
+					case 2:
+						tank.speed = 25;
+						console.log("speed");
+						break;
+					case 3:
+						tank.hp = 1;
+						console.log("die");
+						break;
+				}
+				powerup.dead = true;
+			}
+		});
+	},
 	//Detect if ball collides with any tank
 	detectCollision: function(ball){
 		var self = this;
@@ -81,14 +122,18 @@ GameServer.prototype = {
 		});
 	},
 
+	setHealth: function(tank, newHealth) {
+		tank.hp = newHealth;
+	},
 	hurtTank: function(tank){
-		tank.hp -= 2;
+		tank.hp -= 10;
 	},
 
 	getData: function(){
 		var gameData = {};
 		gameData.tanks = this.tanks;
 		gameData.balls = this.balls;
+		gameData.powerup = this.powerup;
 
 		return gameData;
 	},
@@ -102,6 +147,12 @@ GameServer.prototype = {
 	cleanDeadBalls: function(){
 		this.balls = this.balls.filter(function(ball){
 			return !ball.out;
+		});
+	},
+	
+	cleanpowerup: function(){
+		this.powerup = this.powerup.filter(function(powerup){
+			return !powerup.dead;
 		});
 	},
 
@@ -127,7 +178,6 @@ io.on('connection', function(client) {
 		var initY = getRandomInt(40, 500);
 		client.emit('addTank', { id: tank.id, type: tank.type, isLocal: true, x: initX, y: initY, hp: TANK_INIT_HP });
 		client.broadcast.emit('addTank', { id: tank.id, type: tank.type, isLocal: false, x: initX, y: initY, hp: TANK_INIT_HP} );
-
 		game.addTank({ id: tank.id, type: tank.type, hp: TANK_INIT_HP});
 	});
 
@@ -138,6 +188,7 @@ io.on('connection', function(client) {
 		}
 		//update ball positions
 		game.syncBalls();
+		game.syncPowerup();
 		//Broadcast data to clients
 		client.emit('sync', game.getData());
 		client.broadcast.emit('sync', game.getData());
@@ -146,7 +197,14 @@ io.on('connection', function(client) {
 		//when the tank dies and when the balls explode
 		game.cleanDeadTanks();
 		game.cleanDeadBalls();
+		game.cleanpowerup();
 		counter ++;
+	});
+
+	client.on('createPowerup', function(data) {
+		game.addPowerup(data.powerup);
+		client.emit('addPowerup', {id: data.powerup.id, x: data.powerup.x, y: data.powerup.y, dead: data.powerup.dead, superid: data.powerup.superid});
+		client.broadcast.emit('addPowerup', {id: data.powerup.id, x: data.powerup.x, y: data.powerup.y, dead: data.powerup.dead, superid: data.powerup.superid});
 	});
 
 	client.on('shoot', function(ball){
@@ -175,7 +233,7 @@ function Ball(ownerId, alpha, x, y){
 Ball.prototype = {
 
 	fly: function(){
-		//move to trayectory
+		//move to trajectory
 		var speedX = BALL_SPEED * Math.sin(this.alpha);
 		var speedY = -BALL_SPEED * Math.cos(this.alpha);
 		this.x += speedX;
